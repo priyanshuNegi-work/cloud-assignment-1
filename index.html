@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Secure Data Vault</title>
+    <style>
+        /* Professional Reset & Typography */
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #333;
+        }
+
+        /* The "Glass" Card */
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 40px;
+            width: 100%;
+            max-width: 400px;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+        .card:hover { transform: translateY(-5px); }
+
+        /* Header Styling */
+        h2 { margin-bottom: 10px; color: #1e3c72; font-weight: 700; letter-spacing: -0.5px; }
+        p.subtitle { color: #666; font-size: 0.9rem; margin-bottom: 30px; }
+
+        /* Form Elements */
+        .input-group { margin-bottom: 20px; text-align: left; }
+        label { display: block; font-size: 0.85rem; font-weight: 600; color: #444; margin-bottom: 8px; }
+        
+        input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e1e5ee;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.2s;
+            outline: none;
+        }
+        input:focus { border-color: #2a5298; }
+
+        /* The Action Button */
+        button {
+            width: 100%;
+            padding: 14px;
+            background: #2a5298;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        button:hover { background: #1e3c72; }
+        button:disabled { background: #ccc; cursor: not-allowed; }
+
+        /* Status Messages */
+        #status {
+            margin-top: 20px;
+            font-size: 0.9rem;
+            padding: 10px;
+            border-radius: 6px;
+            display: none; /* Hidden by default */
+        }
+        .success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+
+    </style>
+</head>
+<body>
+
+    <div class="card">
+        <h2>Secure Vault</h2>
+        <p class="subtitle">Assignment 1: Cloud Storage Integration</p>
+
+        <div class="input-group">
+            <label for="username">Username</label>
+            <input type="text" id="username" placeholder="Enter your username">
+        </div>
+
+        <div class="input-group">
+            <label for="password">Secret Password</label>
+            <input type="password" id="password" placeholder="Enter your secret">
+        </div>
+
+        <button onclick="submitData()" id="submitBtn">Save to Cloud</button>
+        <div id="status"></div>
+    </div>
+
+    <script>
+        async function submitData() {
+            const user = document.getElementById('username').value;
+            const pass = document.getElementById('password').value;
+            const btn = document.getElementById('submitBtn');
+            const statusDiv = document.getElementById('status');
+
+            // Reset UI
+            statusDiv.style.display = 'none';
+            statusDiv.className = ''; 
+            
+            // Client-Side Validation
+            if(!user || !pass) {
+                showStatus("Please fill in all fields.", "error");
+                return;
+            }
+
+            // Lock UI while processing
+            btn.disabled = true;
+            btn.innerText = "Encrypting & Uploading...";
+
+            try {
+                const response = await fetch('/api/save', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username: user, password: pass })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    showStatus("Success! " + result.message, "success");
+                    // Clear inputs on success
+                    document.getElementById('username').value = '';
+                    document.getElementById('password').value = '';
+                } else {
+                    showStatus("Error: " + result.message, "error");
+                }
+            } catch (error) {
+                showStatus("Connection Failed. Is the server running?", "error");
+                console.error(error);
+            } finally {
+                // Unlock UI
+                btn.disabled = false;
+                btn.innerText = "Save to Cloud";
+            }
+        }
+
+        function showStatus(msg, type) {
+            const statusDiv = document.getElementById('status');
+            statusDiv.innerText = msg;
+            statusDiv.className = type;
+            statusDiv.style.display = 'block';
+        }
+    </script>
+</body>
+</html>
