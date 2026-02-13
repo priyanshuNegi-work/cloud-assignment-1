@@ -1,8 +1,8 @@
-# 🔒 Secure Cloud Data Vault
+# Secure Cloud Data Vault
 #### A secure, 3-tier web application for archiving sensitive user data to Google Cloud Storage.
 
 
-## 📖 Overview
+## Overview
 This project demonstrates a **production-grade cloud architecture** designed to securely capture user credentials and store them in a private Google Cloud Storage bucket.
 
 Unlike simple "Hello World" apps, this solution implements:
@@ -12,7 +12,7 @@ Unlike simple "Hello World" apps, this solution implements:
 
 ---
 
-## 🏗️ Architecture
+## Architecture
 
 The system follows a **Microservices approach** hosted on a Google Compute Engine VM.
 
@@ -27,15 +27,19 @@ The system follows a **Microservices approach** hosted on a Google Compute Engin
 
 ---
 
-## 🚀 Key Features
+## Key Features
 * **Security First:** The backend API is not exposed publicly. Nginx routes traffic securely.
 * **Zero-Key Authentication:** Uses **Application Default Credentials (ADC)**. No hardcoded API keys or `.json` files are stored in the code.
 * **Restricted Identity:** The VM runs as a `web-uploader` service account that can **only write** to the bucket, not read or delete existing files.
 * **Modern UI:** A responsive, clean interface with real-time feedback.
 
 ---
+## Webpage View 
 
-## 🛠️ Installation & Setup
+![Main Dashboard View](./images/UI.png)
+---
+
+## Installation & Setup
 
 ### Prerequisites
 * A Google Cloud Platform (GCP) Project.
@@ -100,7 +104,7 @@ sudo systemctl restart nginx
 
 ---
 
-## 🧪 Testing
+## Testing
 1. Open your browser and navigate to your VM's **External IP**.
 2. Enter a Username and Password.
 3. Click **Save to Cloud**.
